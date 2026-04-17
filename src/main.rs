@@ -1,8 +1,10 @@
 mod config;
 mod input;
+mod metrics;
 
 use crate::input::parser;
 use config::AppConfig;
+use metrics::*;
 use helius_laserstream::{subscribe};
 use futures_util::StreamExt;
 use tracing_subscriber;
@@ -13,9 +15,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
     
     let config = AppConfig::load()?;
+    let metrics = Metrics::new();
     
     println!("Starting indexer..");
-    
+   
+    //Remember to move this to input/stream.rs later.
     //Opening the gRPC connection to Helius LaserStream below.
     let (stream, _handle) = subscribe(
         config.laserstream_config,
@@ -34,16 +38,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 match message {
                     Ok(update) => {
                         //Parsing input below.
-                        parser::process_update(update);
+                        let (is_successful, token_transfer_count) = parser::process_update(update);
+                        metrics.record_transaction(is_successful, token_transfer_count);
                     }
                     Err(e) => {
                         println!("Error receiving message: {:?}", e);
                     }
                 }
             }
-            //Connection termination below
+            //Connection termination below, printing summary to console.
             _ = signal::ctrl_c() => {
                 println!("\nReceived Ctrl+C command, shutting down connection to Helius");
+                metrics.print_summary();
                 break;
             }
         }
