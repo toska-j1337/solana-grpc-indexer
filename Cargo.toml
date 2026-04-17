@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+bs58 = "0.5.1"
 dotenvy = "0.15.7"
 futures-util = "0.3.32"
 helius-laserstream = "0.1.9"

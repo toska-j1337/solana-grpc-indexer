@@ -3216,6 +3216,7 @@ dependencies = [
 name = "solana-grpc-indexer"
 version = "0.1.0"
 dependencies = [
+ "bs58",
  "dotenvy",
  "futures-util",
  "helius-laserstream",

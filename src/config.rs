@@ -13,6 +13,8 @@ impl AppConfig {
     pub fn load() -> Result<Self, Box<dyn std::error::Error>> {
         dotenv().ok();
 
+        //Helius LaserStream config
+
         let api_key = env::var("HELIUS_API_KEY")
             .expect("HELIUS_API_KEY must be set in .env file");
 
@@ -20,6 +22,8 @@ impl AppConfig {
             "https://laserstream-devnet-ewr.helius-rpc.com".to_string(),
             api_key,
         );
+
+        //Data filter for subscribe_request
 
         let mut transactions_filter = HashMap::new();
         transactions_filter.insert(
