@@ -38,7 +38,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 match message {
                     Ok(update) => {
                         //Parsing input below.
-                        let (is_successful, token_transfer_count) = parser::process_update(update);
+                        let parsed = parser::process_update(update);
+
+                        let is_successful = parsed.is_successful;
+                        let token_transfer_count = parsed.token_transfer_count;
                         metrics.record_transaction(is_successful, token_transfer_count);
                     }
                     Err(e) => {

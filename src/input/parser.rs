@@ -1,19 +1,39 @@
-//parser.rs handles protobuf data,
+//parser.rs parses protobuf data,
 use helius_laserstream::grpc::{subscribe_update, SubscribeUpdate};
 use helius_laserstream::solana::storage::confirmed_block::TransactionStatusMeta;
 use bs58;
 
-pub fn process_update(update: SubscribeUpdate) -> (bool, u64) {
+pub struct ParsedTransaction {
+    pub signature: String,
+    pub is_successful: bool,
+    pub fee: u64,
+    pub token_transfer_count: u64,
+    //pub token_transfers: Vec<TokenTransfer>,
+}
+/*
+pub struct TokenTransfer { //for metrics later
+    pub mint: String,
+    pub owner: String,
+    pub pre_amount: f64,
+    pub post_amount: f64,
+    pub delta: f64,
+}
+*/
+pub fn process_update(update: SubscribeUpdate) -> ParsedTransaction {
     let mut is_successful = false;
     let mut token_transfer_count = 0;
+    let mut fee = 0u64;
+    let mut signature = String::new();
 
     if let Some(subscribe_update::UpdateOneof::Transaction(tx_update)) = update.update_oneof {
         if let Some(tx_info) = tx_update.transaction {
-            let signature = extract_signature(&tx_info.signature);
+            signature = extract_signature(&tx_info.signature);
+
             println!("Received Transaction: {}", signature);
 
             if let Some(meta) = &tx_info.meta {
                 is_successful = meta.err.is_none();
+                fee = meta.fee;
 
                 print_transaction_metadata(meta);
 
@@ -23,7 +43,12 @@ pub fn process_update(update: SubscribeUpdate) -> (bool, u64) {
         }
     }
     //Returning
-    (is_successful, token_transfer_count)
+    ParsedTransaction {
+        signature,
+        is_successful,
+        fee,
+        token_transfer_count,
+    }
 }
 
 
