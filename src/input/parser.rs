@@ -19,7 +19,7 @@ pub struct TokenTransfer { //for metrics later
     pub delta: f64,
 }
 */
-pub fn process_update(update: SubscribeUpdate) -> ParsedTransaction {
+pub fn parse_update(update: SubscribeUpdate) -> ParsedTransaction {
     let mut is_successful = false;
     let mut token_transfer_count = 0;
     let mut fee = 0u64;

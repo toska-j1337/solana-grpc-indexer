@@ -38,7 +38,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 match message {
                     Ok(update) => {
                         //Parsing input below.
-                        let parsed = parser::process_update(update);
+                        let parsed = parser::parse_update(update);
 
                         let is_successful = parsed.is_successful;
                         let token_transfer_count = parsed.token_transfer_count;
