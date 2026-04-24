@@ -7,38 +7,34 @@ pub struct ParsedTransaction {
     pub signature: String,
     pub is_successful: bool,
     pub fee: u64,
-    pub token_transfer_count: u64,
-    //pub token_transfers: Vec<TokenTransfer>,
+    pub compute_units_consumed: Option<u64>,
+    pub token_transfers: Vec<TokenTransfer>,
 }
-/*
-pub struct TokenTransfer { //for metrics later
+
+pub struct TokenTransfer { 
     pub mint: String,
     pub owner: String,
     pub pre_amount: f64,
     pub post_amount: f64,
     pub delta: f64,
 }
-*/
+
 pub fn parse_update(update: SubscribeUpdate) -> ParsedTransaction {
     let mut is_successful = false;
-    let mut token_transfer_count = 0;
     let mut fee = 0u64;
+    let mut compute_units_consumed = None;
     let mut signature = String::new();
+    let mut token_transfers = Vec::new();
 
     if let Some(subscribe_update::UpdateOneof::Transaction(tx_update)) = update.update_oneof {
         if let Some(tx_info) = tx_update.transaction {
             signature = extract_signature(&tx_info.signature);
 
-            println!("Received Transaction: {}", signature);
-
             if let Some(meta) = &tx_info.meta {
                 is_successful = meta.err.is_none();
                 fee = meta.fee;
-
-                print_transaction_metadata(meta);
-
-                //Count and print token balances
-                token_transfer_count = print_and_count_token_changes(meta);
+                compute_units_consumed = meta.compute_units_consumed;
+                token_transfers = parse_token_balances(meta);
             }
         }
     }
@@ -47,7 +43,8 @@ pub fn parse_update(update: SubscribeUpdate) -> ParsedTransaction {
         signature,
         is_successful,
         fee,
-        token_transfer_count,
+        compute_units_consumed,
+        token_transfers,
     }
 }
 
@@ -59,26 +56,12 @@ fn extract_signature(signature_bytes: &[u8]) -> String {
     bs58::encode(signature_bytes).into_string()
 }
 
-//Prints fee and compute units
-fn print_transaction_metadata(meta: &TransactionStatusMeta) {
-    println!("    Fee: {} lamports", meta.fee);
+fn parse_token_balances(meta: &TransactionStatusMeta) -> Vec<TokenTransfer> {
 
-    if let Some(compute) = meta.compute_units_consumed {
-        println!("    Compute Units Consumed: {}", compute);
-    }
-}
-
-//Prints token balance changes and returns count of meaningful transfers
-fn print_and_count_token_changes(meta: &TransactionStatusMeta) -> u64 {
-    let mut transfer_count = 0;
-
-    if meta.pre_token_balances.is_empty() && meta.post_token_balances.is_empty() {
-        return 0;
-    }
-
-    println!("    Token Balances Changed:");
+    let mut transfers = Vec::new();
 
     for (pre, post) in meta.pre_token_balances.iter().zip(meta.post_token_balances.iter()) {
+
         if pre.mint == post.mint {
             let pre_amount = pre.ui_token_amount.as_ref().map(|x| x.ui_amount).unwrap_or(0.0);
             let post_amount = post.ui_token_amount.as_ref().map(|x| x.ui_amount).unwrap_or(0.0);
@@ -86,16 +69,15 @@ fn print_and_count_token_changes(meta: &TransactionStatusMeta) -> u64 {
             let delta_abs = delta.abs();
 
             if delta_abs > 0.000001 {
-                println!("    Mint: {} | Owner: {} | {:6} ➡ {:6} (delta: {:6})",
-                    pre.mint,
-                    pre.owner,
+                transfers.push(TokenTransfer {
+                    mint: pre.mint.clone(),
+                    owner: pre.owner.clone(),
                     pre_amount,
                     post_amount,
-                    delta);
-
-                transfer_count += 1;
-            }  
+                    delta,
+                });
+            }
         }
     }
-    transfer_count
+    transfers
 }

@@ -1,8 +1,10 @@
 mod config;
 mod input;
 mod metrics;
+mod output;
 
 use crate::input::parser;
+use crate::output::console;
 use config::AppConfig;
 use metrics::*;
 use helius_laserstream::{subscribe};
@@ -28,7 +30,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Connected to Helius LaserStream");
     
-    //Needed for type safety.
     tokio::pin!(stream);
 
     //Looping over the stream of protobufs here.
@@ -37,12 +38,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Some(message) = stream.next() => {
                 match message {
                     Ok(update) => {
-                        //Parsing input below.
+                        
                         let parsed = parser::parse_update(update);
 
-                        let is_successful = parsed.is_successful;
-                        let token_transfer_count = parsed.token_transfer_count;
-                        metrics.record_transaction(is_successful, token_transfer_count);
+                        metrics.record_transaction(&parsed);
+                        console::print_transaction(&parsed);
                     }
                     Err(e) => {
                         println!("Error receiving message: {:?}", e);
@@ -52,7 +52,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             //Connection termination below, printing summary to console.
             _ = signal::ctrl_c() => {
                 println!("\nReceived Ctrl+C command, shutting down connection to Helius");
-                metrics.print_summary();
+                //metrics.print_summary();
+                console::print_summary(&metrics); 
                 break;
             }
         }
