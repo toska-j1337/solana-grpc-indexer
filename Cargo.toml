@@ -4,10 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+actix-web = "4.13.0"
 bs58 = "0.5.1"
 dotenvy = "0.15.7"
 futures-util = "0.3.32"
 helius-laserstream = "0.1.9"
+lazy_static = "1.5.0"
+prometheus = "0.14.0"
 sqlx = { version = "0.8.6", features = ["runtime-tokio", "postgres", "chrono"] }
 tokio = { version = "1.52.0", features = ["full"] }
 tracing = "0.1.44"

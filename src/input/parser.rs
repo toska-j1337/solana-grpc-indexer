@@ -55,7 +55,7 @@ pub fn parse_update(update: SubscribeUpdate) -> ParsedTransaction {
 fn extract_signature(signature_bytes: &[u8]) -> String {
     bs58::encode(signature_bytes).into_string()
 }
-
+//Parse token balances from metadata
 fn parse_token_balances(meta: &TransactionStatusMeta) -> Vec<TokenTransfer> {
 
     let mut transfers = Vec::new();

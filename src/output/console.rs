@@ -32,5 +32,6 @@ pub fn print_summary(metrics: &Metrics) {
     println!("Failed TX                   : {}", metrics.failed_transactions.load(Ordering::Relaxed));
     println!("Token Transfers Detected    : {}", metrics.token_transfers_detected.load(Ordering::Relaxed));
     println!("Total Compute Units         : {}", metrics.total_compute_units.load(Ordering::Relaxed));
-    println!("-------------------------------");
+    println!("HASHMAP OVERVIEW            : {:?}", metrics.token_volume);
+    println!("-----------------------------");
 }

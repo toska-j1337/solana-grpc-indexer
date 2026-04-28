@@ -1,36 +1,22 @@
-//metrics.rs is for updating my counters with my structs
+//metrics.rs is for updating my counters with my ParsedTransaction struct
 use std::sync::atomic::{AtomicU64, Ordering};
-use crate::parser::*;
+use std::collections::HashMap;
 
-//My Structs
-//
-//ParsedTransaction
-//signature string
-//is_successful bool
-//fee u64
-//compute_units_consumed Option<u64>
-//token_transfers vector of TokenTransfer
-//
-//TokenTransfer
-//mint string
-//owner string
-//pre_amount f64
-//post_amount f64
-//delta f64
+use crate::api::prometheus_metrics;
+use crate::parser::*;
 
 #[derive(Debug)]
 pub struct Metrics {
-    //Basic transaction metrics
+    //Basic TX Metrics
     pub total_transactions: AtomicU64,
     pub successful_transactions: AtomicU64,
     pub failed_transactions: AtomicU64,
 
-    //Token movement metrics
+    //Token Movement Metrics
     pub token_transfers_detected: AtomicU64,
-    //pub total_sol_moved: AtomicU64, //in lamports
-    //pub total_usdc_moved: AtomicU64,
+    pub token_volume: HashMap<String, AtomicU64>, //<Mint, Total Moved>
 
-    //Performance metrics
+    //Performance Metrics
     pub total_compute_units: AtomicU64,
 }
 
@@ -45,23 +31,30 @@ impl Metrics {
 
             //Token Movement Metrics
             token_transfers_detected: AtomicU64::new(0),
-            //total_sol_moved: AtomicU64::new(0),
-            //total_usdc_moved: AtomicU64::new(0),
+            token_volume: HashMap::new(),
 
             //Performance Metrics
             total_compute_units: AtomicU64::new(0),
         }
     }
-
-    pub fn record_transaction(&self, parsed: &ParsedTransaction) {
+    
+    //Record Transaction Metrics from ParsedTransaction Struct
+    pub fn record_transaction(&mut self, parsed: &ParsedTransaction) {
         self.total_transactions.fetch_add(1, Ordering::Relaxed);
+        prometheus_metrics::TOTAL_TRANSACTIONS.inc();
 
         if parsed.is_successful {
             self.successful_transactions.fetch_add(1, Ordering::Relaxed);
+            prometheus_metrics::SUCCESSFUL_TRANSACTIONS.inc();
         }
         else {
             self.failed_transactions.fetch_add(1, Ordering::Relaxed);
         }
+        
+        //Average TPS
+        prometheus_metrics::TPS
+            .with_label_values(&["30s"])
+            .observe(1.0);
 
         self.total_compute_units.fetch_add(parsed.compute_units_consumed.unwrap_or(0), Ordering::Relaxed);
 
@@ -69,12 +62,20 @@ impl Metrics {
         let transfer_count = parsed.token_transfers.len() as u64;
         if transfer_count > 0 {
             self.token_transfers_detected.fetch_add(transfer_count, Ordering::Relaxed);
+            prometheus_metrics::TOKEN_TRANSFERS.inc_by(transfer_count);
 
-            //Add logic here to track specific token volume (native, USDC, etc)
-            //for transfer in &parsed.token_transfers {
-            //LOGIC FOR TRACKING MINTS HERE
-            //}
+            for transfer in &parsed.token_transfers {
+                let amount_moved = transfer.delta.abs() as u64;
+                
+                //Tracking SPL Tokens Here.
+                self.token_volume
+                    .entry(transfer.mint.clone())
+                    .or_insert_with(|| AtomicU64::new(0))
+                    .fetch_add(amount_moved, Ordering::Relaxed);
 
+                self.token_transfers_detected.fetch_add(1, Ordering::Relaxed);
+                
+            }
         }
     }
 }
