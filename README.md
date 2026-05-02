@@ -31,10 +31,10 @@ Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, an
     Edit prometheus.yml target to the IP:PORT of your Actix/Tokio server
     - Example `targets: [192.168.50.113:8080]`
 
-5.  Start Prometheus and Grafana for observability
+5.  Start Prometheus and Grafana for observability\
     ```docker compose up -d```
 
-6.  Run the indexer
+6.  Run the indexer\
     ```cargo run```
 
 7.  Open Grafana at http://YOUR_IP_ADDRESS:3000 *(default login: admin/admin)*
