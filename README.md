@@ -19,25 +19,25 @@ Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, an
 
 ## Quick Start
 
-1.  Clone the repo
+1.  Clone the repo\
     ```git clone https://github.com/toska-j1337/solana-grpc-indexer.git```
     ```cd solana-grpc-indexer```
 
-2.  Copy and configure environment
+3.  Copy and configure environment
     ```cp .env.example .env```
     Edit .env with your Helius API key
 
-3.  Configure Prometheus.yml target
+4.  Configure Prometheus.yml target
     Edit prometheus.yml target to the IP:PORT of your Actix/Tokio server.
     - Example `targets: [192.168.50.113:8080]`
 
-4.  Start Prometheus and Grafana for observability
+5.  Start Prometheus and Grafana for observability
     ```docker compose up -d```
 
-5.  Run the indexer
+6.  Run the indexer
     ```cargo run```
 
-6.  Open Grafana at http://YOUR_IP_ADDRESS:3000 *(default login: admin/admin)*
+7.  Open Grafana at http://YOUR_IP_ADDRESS:3000 *(default login: admin/admin)*
 
 ## Screenshots
 
