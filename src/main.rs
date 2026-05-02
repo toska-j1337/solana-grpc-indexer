@@ -32,12 +32,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         App::new()
             .route("/metrics", web::get().to(metrics_handler))
     })
-    .bind("0.0.0.0:8080")?
+    //.bind("0.0.0.0:8080")?
+    .bind(format!("{}:{}",
+            std::env::var("BIND_ADDRESS").unwrap_or_else(|_| "0.0.0.0".to_string()),
+            std::env::var("PORT").unwrap_or_else(|_| "0.0.0.0".to_string())
+    ))?
     .run();
 
     //Run HTTP server in background
     tokio::spawn(server);
-    println!("Metrics resource at http://192.168.50.113:8080/metrics");
+    //println!("Metrics resource at http://192.168.50.113:8080/metrics");
     
     println!("Starting indexer..");
     
