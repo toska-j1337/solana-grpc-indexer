@@ -41,7 +41,7 @@ Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, an
 
 ## Screenshots
 
-**Terminal Output**
+**Terminal Output**\
 ![Terminal Output](screenshots/Terminal_Output.png)
 
 **Prometheus Targets**
