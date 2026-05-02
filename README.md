@@ -48,7 +48,7 @@ Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, an
 ![Prometheus Targets](screenshots/Prometheus_Target_Health.png)
 
 **Basic Transaction Metrics**
-![Basic Transaction Metrics](screenshots/Basic_Transaction_Examples.png)
+![Basic Transaction Metrics](screenshots/Basic_Transaction_Metrics_Examples.png)
 
 **SOL Metrics**
 ![SOL Metrics](screenshots/SOL_Metrics_Examples.png)
