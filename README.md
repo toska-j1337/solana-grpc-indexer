@@ -23,8 +23,8 @@ Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, an
     ```git clone https://github.com/toska-j1337/solana-grpc-indexer.git```\
     ```cd solana-grpc-indexer```
 
-3.  Copy and configure environment
-    ```cp .env.example .env```
+3.  Copy and configure environment\
+    ```cp .env.example .env```\
     Edit .env with your Helius API key
 
 4.  Configure Prometheus.yml target\
