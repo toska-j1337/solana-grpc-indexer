@@ -1,2 +1,65 @@
-# solana-grpc-indexer
-Real-time Solana transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, and PostgreSQL
+# Real-time Solana Transaction Indexer
+Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, and PostgreSQL
+
+## Features
+
+- Real-time transaction streaming via Helius LaserStream
+- Parsing of native SOL, wrapped SOL, and SPL token transfers
+- Prometheus metrics endpoint
+- Live Grafana dashboards of token metrics
+- Clean architecture with separation of concerns
+
+## Tech Stack
+
+- Rust + Tokio + Actix Web
+- Helius LaserStream (gRPC)
+- Prometheus + Grafana
+- Docker Compose
+- PostgreSQL (planned for historical data storage and analysis)
+
+## Quick Start
+
+1.  Clone the repo
+    git clone https://github.com/toska-j1337/solana-grpc-indexer.git
+    cd solana-grpc-indexer
+
+2.  Copy and configure environment
+    cp .env.example .env
+    # Edit .env with your Helius API key
+
+3.  Configure Prometheus.yml target
+    # Edit prometheus.yml target to the IP:PORT of your Actix/Tokio server.
+    - Example `targets: [192.168.50.113:8080]`
+
+4.  Start Prometheus and Grafana for observability
+    docker compose up -d
+
+5.  Run the indexer
+    cargo run
+
+6.  Open Grafana at http://your-ip-address:3000 (default login: admin/admin)
+
+## Screenshots
+
+**Terminal Output**
+![Terminal Output](screenshots/Terminal_Output.png)
+
+**Prometheus Targets**
+![Prometheus Targets](screenshots/Prometheus_Target_Health.png)
+
+**Basic Transaction Metrics**
+![Basic Transaction Metrics](screenshots/Basic_Transaction_Examples.png)
+
+**SOL Metrics**
+![SOL Metrics](screenshots/SOL_Metrics_Examples.png)
+
+**Additional Token Metrics**
+![Token Metrics](screenshots/Additional_Token_Metrics.png)
+
+## Roadmap
+- Async PostgreSQL bulk inserts for historical data
+- Enhanced transaction parsing and metrics handling
+- REST API for querying live/historical data
+
+Seeking junior Rust roles, preferably remote.
+- toska.admin@proton.me
