@@ -20,7 +20,7 @@ Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, an
 ## Quick Start
 
 1.  Clone the repo\
-    ```git clone https://github.com/toska-j1337/solana-grpc-indexer.git```
+    ```git clone https://github.com/toska-j1337/solana-grpc-indexer.git```\
     ```cd solana-grpc-indexer```
 
 3.  Copy and configure environment
