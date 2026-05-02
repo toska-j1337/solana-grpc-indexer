@@ -28,7 +28,7 @@ Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, an
     Edit .env with your Helius API key
 
 4.  Configure Prometheus.yml target\
-    Edit prometheus.yml target to the IP:PORT of your Actix/Tokio server. \
+    Edit prometheus.yml target to the IP:PORT of your Actix/Tokio server \
     - Example `targets: [192.168.50.113:8080]`
 
 5.  Start Prometheus and Grafana for observability
