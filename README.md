@@ -6,7 +6,7 @@ Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, an
 [Watch Here](https://youtu.be/m3cNuMDaBGA?si=j-Flbfpvdpltutlq)\
 00:00 - Introduction & Project Origin\
 03:02 - Code Walkthrough\
-09:15 - Demo\
+09:15 - Demo
 
 
 ## Features
