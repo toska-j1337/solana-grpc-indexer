@@ -1,6 +1,13 @@
 # Real-time Solana Transaction Indexer
 Transaction indexer using Helius LaserStream (Yellowstone gRPC), Rust, Tokio, and PostgreSQL
 
+## Project Video Walkthrough
+[Watch Here](https://youtu.be/m3cNuMDaBGA?si=j-Flbfpvdpltutlq)
+00:00 - Introduction & Project Origin
+03:02 - Code Walkthrough
+09:15 - Demo
+
+
 ## Features
 
 - Real-time transaction streaming via Helius LaserStream
